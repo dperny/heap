@@ -1,9 +1,9 @@
 class maxheap:
-    def __init__(self):
-        pass
-
-    def create_heap(self):
-        pass
+    def __init__(self,size,array=None)
+        if array = None:
+            self._store = [None] * size 
+        else:
+            self.heapify(array)
 
     def heapify(self,array):
         pass
