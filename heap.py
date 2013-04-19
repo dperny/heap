@@ -1,15 +1,16 @@
 import math
+import copy
 
 class minheap:
-    def __init__(self,size,array=None):
-        if array is not None: 
-            assert size == len(array)
-        self.size = size
+    def __init__(self,capacity,array=None):
+        self.size = 0
         if array is None:
             self._store = [None] * size 
         else:
-            self._store = array
+            self.size = len(array)
+            self._store = copy.copy(array)
             self.build_heap()
+        self.capacity = capacity
 
     
     def build_heap(self):
@@ -30,17 +31,32 @@ class minheap:
             self._store[smallest],self._store[index] = self._store[index],self._store[smallest]
             self.heapify(smallest)
 
-    def find_max(self):
+    def find_min(self):
+        return self._store[0]
+
+    def delete_min(self):
+        if self.size < 1:
+            return None
+        top = self._store[0]
+        self._store[0] = self._store[self.size-1]
+        self.size -= 1
+        self.heapify(0)
+        return top
+
+    def decrease_key(self,index,key): 
         pass
 
-    def delete_max(self):
-        pass
-
-    def increase_key(self):
-        pass
-
+    # odds are left, evens are right
     def insert(self,value):
-        pass
+        index = self.size
+        parent = self._parent(index)
+        self._store[index] = value
+        while self._store[parent] >= self._store[index]:
+            self._store[parent], self._store[index] = self._store[index], self._store[parent]
+            index = parent
+            parent = self._parent(index)
+        self.size += 1
+
 
     def merge(self,value):
         pass
@@ -62,3 +78,7 @@ class minheap:
     
         with open(filename,'w') as fp:
             fp.write(outstring)
+
+    def _parent(self,index):
+        return math.floor((index-1)/2)
+
