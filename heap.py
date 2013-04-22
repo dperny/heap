@@ -5,10 +5,10 @@ class minheap:
     def __init__(self,capacity,array=None):
         self.size = 0
         if array is None:
-            self._store = [None] * size 
+            self._store = [None] * capacity 
         else:
             self.size = len(array)
-            self._store = copy.copy(array)
+            self._store = copy.copy(array) + [None] * (capacity - len(array))
             self.build_heap()
         self.capacity = capacity
 
@@ -22,10 +22,10 @@ class minheap:
         right = (2 * index) + 2
         smallest = index
         if left < self.size:
-            if self._store[left] < self._store[smallest]:
+            if self._store[left] <= self._store[smallest]:
                 smallest = left
         if right < self.size:
-            if self._store[right] < self._store[smallest]:
+            if self._store[right] <= self._store[smallest]:
                 smallest = right
         if smallest != index:
             self._store[smallest],self._store[index] = self._store[index],self._store[smallest]
@@ -39,6 +39,7 @@ class minheap:
             return None
         top = self._store[0]
         self._store[0] = self._store[self.size-1]
+        self._store[self.size-1] = None
         self.size -= 1
         self.heapify(0)
         return top
@@ -48,18 +49,21 @@ class minheap:
 
     # odds are left, evens are right
     def insert(self,value):
-        index = self.size
+        rval = self._store[-1]
+        if self.size == self.capacity:
+            self._store[-1] = value
+            index = self.size-1
+        else:
+            self._store[self.size] = value
+            index = self.size
         parent = self._parent(index)
-        self._store[index] = value
-        while self._store[parent] >= self._store[index]:
-            self._store[parent], self._store[index] = self._store[index], self._store[parent]
+        while index != 0 and self._store[index] <= self._store[parent]:
+            self._store[index],self._store[parent] = self._store[parent],self._store[index]
             index = parent
             parent = self._parent(index)
-        self.size += 1
-
-
-    def merge(self,value):
-        pass
+        if rval is None:
+            self.size += 1
+        return rval
 
     def graphviz(self,filename):
         outstring = "digraph tree{\n"
@@ -81,4 +85,7 @@ class minheap:
 
     def _parent(self,index):
         return math.floor((index-1)/2)
+
+    def isEmpty(self):
+        return self.size == 0
 
